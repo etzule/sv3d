@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG to 3D Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <div id="header">
+            <h1>SVG to 3D Converter</h1>
+            <p>Unggah file SVG dan konversi menjadi objek 3D yang siap untuk Blender</p>
+        </div>
+        <div id="content">
+            <div id="controls">
+                <div class="control-group">
+                    <label for="svg-file">Pilih File SVG:</label>
+                    <input type="file" id="svg-file" accept=".svg">
+                    <div id="file-info">Tidak ada file dipilih</div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="extrude-depth">Kedalaman Ekstrusi (mm): <span id="depth-value" class="range-value">5</span></label>
+                    <input type="range" id="extrude-depth" min="0.1" max="50" step="0.1" value="5">
+                </div>
+                
+                <div class="control-group">
+                    <label for="bevel-enabled">Bevel (Chamfer):</label>
+                    <select id="bevel-enabled">
+                        <option value="true">Aktif</option>
+                        <option value="false">Nonaktif</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="bevel-size">Ukuran Bevel (mm): <span id="bevel-size-value" class="range-value">0.5</span></label>
+                    <input type="range" id="bevel-size" min="0" max="5" step="0.1" value="0.5" disabled>
+                </div>
+                
+                <div class="control-group">
+                    <label for="bevel-thickness">Ketebalan Bevel (mm): <span id="bevel-thickness-value" class="range-value">0.5</span></label>
+                    <input type="range" id="bevel-thickness" min="0" max="5" step="0.1" value="0.5" disabled>
+                </div>
+                
+                <div class="control-group">
+                    <label for="color">Warna Objek:</label>
+                    <input type="color" id="color" value="#3498db">
+                </div>
+                
+                <div class="control-group">
+                    <label>Rotasi Objek:</label>
+                    <div class="rotation-controls">
+                        <div class="rotation-control">
+                            <label for="rotation-x">X</label>
+                            <input type="number" id="rotation-x" min="-180" max="180" step="1" value="0">
+                        </div>
+                        <div class="rotation-control">
+                            <label for="rotation-y">Y</label>
+                            <input type="number" id="rotation-y" min="-180" max="180" step="1" value="0">
+                        </div>
+                        <div class="rotation-control">
+                            <label for="rotation-z">Z</label>
+                            <input type="number" id="rotation-z" min="-180" max="180" step="1" value="0">
+                        </div>
+                    </div>
+                    <button id="reset-rotation" class="reset-rotation">Reset Rotasi</button>
+                </div>
+                
+                <div class="button-group">
+                    <button id="convert-btn">Konversi ke 3D</button>
+                    <button id="reset-btn">Reset</button>
+                </div>
+                <button id="export-btn">Ekspor sebagai STL</button>
+                <button id="save-to-db-btn" class="secondary">Simpan ke Database</button>
+                <button id="view-history-btn" class="secondary">Lihat Riwayat</button>
+                
+                <div id="history-panel" class="hidden">
+                    <h3>Riwayat Konversi</h3>
+                    <div id="history-list"></div>
+                    <button id="close-history-btn">Tutup</button>
+                </div>
+                
+                <div class="blender-instructions">
+                    <h3>Petunjuk Import ke Blender:</h3>
+                    <ol>
+                        <li>Ekspor model sebagai file STL</li>
+                        <li>Buka Blender</li>
+                        <li>File > Import > STL</li>
+                        <li>Pilih file yang telah diekspor</li>
+                        <li>Untuk edit lebih lanjut:
+                            <ul>
+                                <li>Tekan Tab untuk masuk mode edit</li>
+                                <li>Gunakan alat seperti Extrude, Bevel, dll.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div id="viewer">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
+
+<style>
+    * {
+    box-sizing: border-box;
+}
+body { 
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+#container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+#header {
+    padding: 15px;
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+}
+#content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+@media (min-width: 768px) {
+    #content {
+        flex-direction: row;
+    }
+}
+#controls {
+    width: 100%;
+    padding: 15px;
+    background: #ecf0f1;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+@media (min-width: 768px) {
+    #controls {
+        width: 300px;
+        max-height: none;
+    }
+}
+@media (min-width: 992px) {
+    #controls {
+        width: 350px;
+    }
+}
+#viewer {
+    flex: 1;
+    position: relative;
+    min-height: 50vh;
+}
+#canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.control-group {
+    margin-bottom: 15px;
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+button {
+    background: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+    padding: 10px;
+}
+button:hover {
+    background: #2980b9;
+}
+button.secondary {
+    background: #7f8c8d;
+    margin-top: 5px;
+}
+button.secondary:hover {
+    background: #6c7a7d;
+}
+#file-info {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #555;
+}
+.blender-instructions {
+    background: #e3f2fd;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 13px;
+}
+.blender-instructions h3 {
+    margin-top: 0;
+    color: #0d47a1;
+    font-size: 16px;
+}
+.rotation-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.rotation-control {
+    flex: 1;
+}
+.rotation-control input {
+    width: 100%;
+}
+.reset-rotation {
+    margin-top: 5px;
+    width: 100%;
+}
+.range-value {
+    display: inline-block;
+    width: 40px;
+    text-align: right;
+}
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.button-group button {
+    flex: 1;
+}
+.hidden {
+    display: none;
+}
+#history-panel {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+#history-panel h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+#history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.history-item {
+    padding: 8px;
+    margin-bottom: 5px;
+    background: white;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+.history-item:hover {
+    background: #f0f0f0;
+}
+
+/* Mobile specific styles */
+@media (max-width: 767px) {
+    #header {
+        padding: 10px;
+    }
+    #header h1 {
+        font-size: 20px;
+        margin: 5px 0;
+    }
+    #header p {
+        font-size: 14px;
+        margin: 5px 0;
+    }
+    .control-group {
+        margin-bottom: 12px;
+    }
+    .blender-instructions {
+        padding: 10px;
+        font-size: 12px;
+    }
+    .blender-instructions h3 {
+        font-size: 15px;
+    }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 991px) {
+    #controls {
+        padding: 15px 10px;
+    }
+}
+</style>
