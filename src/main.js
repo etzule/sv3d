@@ -68,7 +68,7 @@ function getCanvasHeight() {
     return panel ? panel.clientHeight : window.innerHeight * 0.8;
 }
 
-// Mendapatkan rasio aspek canvas
+// Mendapatkan rasio aspek kanvas
 function getAspectRatio() {
     return getCanvasWidth() / getCanvasHeight();
 }
