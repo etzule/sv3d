@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 
-// Variabel utama
+gi// Variabel utama
 let scene, camera, renderer, controls, meshes = [], thickness = 5;
 const originalRotation = new THREE.Euler(0, 0, 0);
 
