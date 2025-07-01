@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Website Konversi</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="icon" href="./assets/vite-DcBtz0py.svg" type="image/x-icon">
-  <script type="module" crossorigin src="./assets/index-BDGsFYMV.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BGVOj12Y.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/assets/vite-DcBtz0py.svg" type="image/x-icon">
+  <script type="module" crossorigin src="/assets/index-BDGsFYMV.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BGVOj12Y.css">
 </head>
 <body>
     <header>
         <div class="container">
             <div class="header-left">
-                <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img class="logo main-logo" src="./assets/js-B2gqmNKf.png" alt="Logo" height="50" width="50"></a>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img class="logo main-logo" src="/assets/js-B2gqmNKf.png" alt="Logo" height="50" width="50"></a>
                 <h1> | SV3D</h1>
             </div>
             <div class="icons">
@@ -27,13 +26,13 @@
             <h2>SVG Preview</h2>
             <div id="svg-preview"></div>
             <div class="toolbar">
+                <label for="thickness" class="thickness-label">Tebal</label>
+                <input type="range" id="thickness" min="1" max="30" value="5" step="1" style="vertical-align:middle;">
+                <span id="thickness-value">5</span>
                 <label for="svg-file" class="custom-file-label">Pilih File</label>
                 <input type="file" id="svg-file" accept=".svg" style="display:none;">
                 <button id="export-btn">Export STL</button>
                 <span id="info"></span>
-                <label for="thickness" class="thickness-label">Tebal</label>
-                <input type="range" id="thickness" min="1" max="30" value="5" step="1" style="vertical-align:middle;">
-                <span id="thickness-value">5</span>
             </div>
         </section>
         <section class="right-panel">
@@ -41,7 +40,6 @@
                 <canvas id="canvas"></canvas>
             </div>
         </section>
-    </main>
-
+    </main>
 </body>
 </html>
